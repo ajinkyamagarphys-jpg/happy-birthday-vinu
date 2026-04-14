@@ -26,6 +26,47 @@ body{
   cursor:none;
 }
 
+/* =================== SPLASH =================== */
+#splash{
+  position:fixed;inset:0;z-index:99999;
+  background:radial-gradient(ellipse at 30% 40%,#3b0764,transparent 60%),
+             radial-gradient(ellipse at 70% 60%,#4c0519,transparent 60%),
+             #0a0015;
+  display:flex;align-items:center;justify-content:center;
+  transition:opacity .8s ease, transform .8s ease;
+}
+#splash.hide{opacity:0;pointer-events:none;transform:scale(1.05)}
+.splash-inner{text-align:center;padding:40px 20px;animation:splashIn .9s ease;}
+@keyframes splashIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.splash-emoji{font-size:5rem;display:block;margin-bottom:24px;animation:bounce 2s ease-in-out infinite;}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+.splash-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2.8rem,10vw,6rem);
+  font-weight:900;line-height:1.05;
+  background:linear-gradient(135deg,#fff 0%,#ff6b9d 40%,#f5c842 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;margin-bottom:16px;
+}
+.splash-title em{font-style:italic}
+.splash-sub{color:rgba(255,255,255,.55);font-size:1.1rem;margin-bottom:48px;font-family:'Cormorant Garamond',serif;letter-spacing:.05em;}
+#splash-btn{
+  padding:20px 56px;
+  font-family:'Playfair Display',serif;
+  font-size:1.3rem;font-style:italic;
+  color:#fff;border:none;border-radius:100px;
+  background:linear-gradient(135deg,#7c3aed,#db2777,#f59e0b);
+  cursor:pointer;
+  transition:transform .3s,box-shadow .3s;
+  animation:splashPulse 2s ease-in-out infinite;
+}
+@keyframes splashPulse{
+  0%,100%{box-shadow:0 0 40px rgba(219,39,119,.5)}
+  50%{box-shadow:0 0 80px rgba(219,39,119,.9),0 0 120px rgba(245,200,66,.3)}
+}
+#splash-btn:hover{transform:scale(1.07)}
+#splash-btn:active{transform:scale(0.97)}
+
 /* Custom cursor */
 #cursor{
   width:20px;height:20px;
@@ -622,6 +663,16 @@ body{
 </head>
 <body>
 
+<!-- Splash Screen -->
+<div id="splash">
+  <div class="splash-inner">
+    <div class="splash-emoji">🎂</div>
+    <h1 class="splash-title">Happy Birthday<br><em>Vinu</em></h1>
+    <p class="splash-sub">A surprise is waiting for you…</p>
+    <button id="splash-btn">✨ Open Surprise ✨</button>
+  </div>
+</div>
+
 <!-- Custom Cursor -->
 <div id="cursor"></div>
 <div id="cursor-trail"></div>
@@ -1091,6 +1142,13 @@ celebObserver.observe(document.getElementById('celebration'));
 const music=document.getElementById('bg-music');
 const musicBtn=document.getElementById('music-btn');
 let musicOn=false;
+// Splash screen entry — guaranteed music start on real user gesture
+document.getElementById('splash-btn').addEventListener('click',()=>{
+  const splash=document.getElementById('splash');
+  splash.classList.add('hide');
+  setTimeout(()=>splash.remove(),900);
+  music.play().then(()=>{musicBtn.textContent='🔊';musicOn=true;}).catch(()=>{});
+});
 musicBtn.addEventListener('click',()=>{
   if(musicOn){music.pause();musicBtn.textContent='🎵';musicOn=false;}
   else{music.play().catch(()=>{});musicBtn.textContent='🔊';musicOn=true;}
